@@ -49,7 +49,14 @@ void daemonize() {
     if (chdir("/") < 0) {
         exit(EXIT_FAILURE);
     }
-
+    FILE *fp = fopen("iplink.log", "rb");
+    if (fp) {
+        read_scores(fp);
+    }
+    FILE *fp = fopen("iplink.log", "wb");
+    if (!fp)
+        error();
+    write_scores(fp);
     // Open a log file for writing
     int log_fd = open("iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (log_fd < 0) {
