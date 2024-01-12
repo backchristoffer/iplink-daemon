@@ -22,7 +22,7 @@ jobs:
         
     - uses: actions/checkout@v3
     - name: Build the Docker image and push to github
-      run: docker build . --file src/iplink_src/Dockerfile --tag iplink-daemon:latest
+      run: docker build . --tag iplink-daemon:latest
     - name: Tag image
       run: docker image tag iplink-daemon:latest ghcr.io/backchristoffer/iplink-daemon:latest
     - name: Push image to github
