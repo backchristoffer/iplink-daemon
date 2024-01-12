@@ -50,13 +50,13 @@ void daemonize() {
         exit(EXIT_FAILURE);
     }
     FILE *fptr;
-    fptr = fopen("iplink.log", "rb+");
+    fptr = fopen("/var/log/iplink.log", "rb+");
     if(fptr == NULL)
     {
-        fptr = fopen("iplink.log", "wb");
+        fptr = fopen("/var/log/iplink.log", "wb");
     }
     // Open a log file for writing
-    int log_fd = open("iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
+    int log_fd = open("/var/log/iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (log_fd < 0) {
         exit(EXIT_FAILURE);
     }
