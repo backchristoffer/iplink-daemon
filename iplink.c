@@ -51,7 +51,7 @@ void daemonize() {
     }
 
     // Open a log file for writing
-    int log_fd = open("/var/log/iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
+    int log_fd = open("iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (log_fd < 0) {
         exit(EXIT_FAILURE);
     }
