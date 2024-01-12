@@ -14,7 +14,7 @@ spec:
       nodeSelector: 
         role: worker
       containers:
-      - image: openshift/hello-openshift
+      - image: ghcr.io/backchristoffer/iplink-daemon:latest
         imagePullPolicy: Always
         name: registry
         ports:
