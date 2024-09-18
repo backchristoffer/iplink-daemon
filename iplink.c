@@ -28,11 +28,14 @@ void *iplink(void *arg) {
 }
 
 void daemonize() {
+
     pid_t pid = fork();
     if (pid > 0) {
         exit(EXIT_SUCCESS);
     }
+
     umask(0);
+    
     pid_t sid = setsid();
     if (sid < 0) {
         exit(EXIT_FAILURE);
@@ -41,21 +44,22 @@ void daemonize() {
         exit(EXIT_FAILURE);
     }
 
-    /// Need to debug this part - why is no .log created?
-    FILE *fptr;
-    fptr = fopen("/var/log/iplink.log", "rb+");
-    if(fptr == NULL)
-    {
-        fptr = fopen("/var/log/iplink.log", "wb");
-    }
-    int log_fd = open("/var/log/iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
+    int log_fd = open("/tmp/iplinkd.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (log_fd < 0) {
+        perror("open log file");
         exit(EXIT_FAILURE);
     }
 
+    if (dup2(log_fd, STDOUT_FILENO) < 0) {
+        perror("dup2 stdout");
+        exit(EXIT_FAILURE);
+    }
 
-    dup2(log_fd, STDOUT_FILENO);
-    dup2(log_fd, STDERR_FILENO);
+    if (dup2(log_fd, STDERR_FILENO) < 0) {
+        perror("dup2 stderr");
+        exit(EXIT_FAILURE);
+    }
+
     close(STDIN_FILENO);
 }
 
