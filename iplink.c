@@ -28,65 +28,45 @@ void *iplink(void *arg) {
 }
 
 void daemonize() {
-    // Fork the parent process
     pid_t pid = fork();
-
-    // Exit the parent process
     if (pid > 0) {
         exit(EXIT_SUCCESS);
     }
-
-    // Change the file mode mask
     umask(0);
-
-    // Create a new session ID
     pid_t sid = setsid();
     if (sid < 0) {
         exit(EXIT_FAILURE);
     }
-
-    // Change the current working directory to root
     if (chdir("/") < 0) {
         exit(EXIT_FAILURE);
     }
+
+    /// Need to debug this part - why is no .log created?
     FILE *fptr;
     fptr = fopen("/var/log/iplink.log", "rb+");
     if(fptr == NULL)
     {
         fptr = fopen("/var/log/iplink.log", "wb");
     }
-    // Open a log file for writing
     int log_fd = open("/var/log/iplink.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (log_fd < 0) {
         exit(EXIT_FAILURE);
     }
 
-    // Redirect standard output and error to the log file
+
     dup2(log_fd, STDOUT_FILENO);
     dup2(log_fd, STDERR_FILENO);
-
-    // Close standard file descriptors
     close(STDIN_FILENO);
-
-    // Optional: Close the log file descriptor
-    // close(log_fd);
 }
-
 
 int main(void) {
     pthread_t tsthread;
-
-    // Create the daemon
     daemonize();
-
-    // Set the signal handler
     signal(SIGINT, sig_handler);
-
     while (keep_running) {
         timestamp();
         pthread_create(&tsthread, NULL, iplink, NULL);
         sleep(15);
     }
-
     return EXIT_SUCCESS;
 }
